@@ -6,13 +6,13 @@ MAssertCpp
 A microcontroller-friendly C++ assert() for embedded applications.
 ---------------------------------------------------------------------------------
 
-.. image:: https://api.travis-ci.org/gbmhunter/MAssertCpp.png?branch=master   
-	:target: https://travis-ci.org/gbmhunter/MAssertCpp
+.. image:: https://api.travis-ci.org/mbedded-ninja/MAssertCpp.png?branch=master   
+	:target: https://travis-ci.org/mbedded-ninja/MAssertCpp
 
 - Author: gbmhunter <gbmhunter@gmail.com> (http://www.mbedded.ninja)
 - First Ever Commit: 2014-09-01
-- Last Modified: 2014-09-01
-- Version: v1.0.0.0
+- Last Modified: 2014-09-02
+- Version: v1.0.1.0
 - Company: mbedded.ninja
 - Project: MToolkit
 - Language: C++
@@ -62,5 +62,6 @@ Changelog
 ========= ========== ===================================================================================================
 Version   Date       Comment
 ========= ========== ===================================================================================================
+v1.0.1.0  2014-09-02 Added 'MbeddedNinja' namespace qualifier to assert macros.
 v1.0.0.0  2014-09-01 Initial commit. Basic assert() functions working and unit tests running on build.
 ========= ========== ===================================================================================================
