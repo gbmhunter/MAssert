@@ -3,7 +3,7 @@
 # @author 			Geoffrey Hunter <gbmhunter@gmail.com> (wwww.mbedded.ninja)
 # @edited 			n/a
 # @created			2014-08-19
-# @last-modified 	2014-09-01
+# @last-modified 	2014-09-12
 # @brief 			Makefile for Linux-based make, to compile the MAssert-Cpp library, example code and run unit test code.
 # @details
 #					See README in repo root dir for more info.
@@ -23,21 +23,21 @@ EXAMPLE_OBJ_FILES := $(patsubst %.cpp,%.o,$(wildcard example/*.cpp))
 EXAMPLE_LD_FLAGS := 
 EXAMPLE_CC_FLAGS := -Wall -g -c -I. -I./lib -std=c++0x
 
-DEP_LIB_PATHS := -L ../unittest-cpp
-DEP_LIBS := -l UnitTest++
+DEP_LIB_PATHS := -L ../MUnitTest
+DEP_LIBS := -l MUnitTest
 DEP_INCLUDE_PATHS := -I../
 
 .PHONY: depend clean
 
 # All
-all: embAssertLib test
+all: src test
 	
 	# Run unit tests:
-	@./test/MAssertTests.elf
+	@./test/Tests.elf
 
 #======== MAssertCpp LIB ==========#
 
-embAssertLib : $(SRC_OBJ_FILES)
+src : $(SRC_OBJ_FILES) | deps
 	# Make library
 	ar r libMAssert.a $(SRC_OBJ_FILES)
 	
@@ -51,14 +51,22 @@ src/%.o: src/%.cpp
 		rm -f $*.d >/dev/null 2>&1
 
 -include $(SRC_OBJ_FILES:.o=.d)
+
+# ======== DEPENDENCIES ========
+
+deps:
+	if [ ! -d ../MUnitTest ]; then \
+	git clone https://github.com/mbedded-ninja/MUnitTest ../MUnitTest; \
+	fi;
+	$(MAKE) -C ../MUnitTest/ all
 	
 	
 # ======== TEST ========
 	
 # Compiles unit test code
-test : $(TEST_OBJ_FILES) | embAssertLib unitTestLib
+test : $(TEST_OBJ_FILES) | src deps
 	# Compiling unit test code
-	g++ $(TEST_LD_FLAGS) -o ./test/MAssertTests.elf $(TEST_OBJ_FILES) $(DEP_LIB_PATHS) $(DEP_LIBS) -L./ -lMAssert
+	g++ $(TEST_LD_FLAGS) -o ./test/Tests.elf $(TEST_OBJ_FILES) $(DEP_LIB_PATHS) $(DEP_LIBS) -L./ -lMAssert
 
 # Generic rule for test object files
 test/%.o: test/%.cpp
@@ -71,35 +79,26 @@ test/%.o: test/%.cpp
 
 -include $(TEST_OBJ_FILES:.o=.d)
 	
-unitTestLib:
-	# Compile UnitTest++ library (has it's own Makefile)
-	# Save source dir
-	pushd .; \
-	cd ../unittest-cpp; \
-	cmake .; \
-	$(MAKE) all; \
-	# Go back to source dir
-	
 	
 # ====== CLEANING ======
 	
-clean: clean-ut clean-emb-assert
-	# Clean UnitTest++ library (has it's own Makefile)
-	cd ../unittest-cpp; \
-	make clean;
+clean: clean-ut clean-src clean-deps
 	
 clean-ut:
 	@echo " Cleaning test object files..."; $(RM) ./test/*.o
 	@echo " Cleaning test executable..."; $(RM) ./test/*.elf
 	
-clean-emb-assert:
+clean-src:
 	@echo " Cleaning src object files..."; $(RM) ./src/*.o
 	@echo " Cleaning src dependency files..."; $(RM) ./src/*.d
-	@echo " Cleaning MAssert-Cpp static library..."; $(RM) ./*.a
+	@echo " Cleaning src static library..."; $(RM) ./*.a
 	@echo " Cleaning test object files..."; $(RM) ./test/*.o
 	@echo " Cleaning test dependency files..."; $(RM) ./test/*.d
 	@echo " Cleaning test executable..."; $(RM) ./test/*.elf
 	@echo " Cleaning example object files..."; $(RM) ./example/*.o
 	@echo " Cleaning example executable..."; $(RM) ./example/*.elf
 
+clean-deps:
+	@echo " Cleaning deps...";
+	$(MAKE) -C ../MUnitTest/ clean
 	

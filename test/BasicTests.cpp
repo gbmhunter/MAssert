@@ -2,74 +2,75 @@
 //! @file 			BasicTests.cpp
 //! @author 		Geoffrey Hunter <gbmhunter@gmail.com> (www.mbedded.ninja)
 //! @created		2014-08-19
-//! @last-modified 	2014-09-01
+//! @last-modified 	2014-09-12
 //! @brief 			Contains basic tests.
 //! @details
 //!					See README.rst in root dir for more info.
 
+//===== SYSTEM LIBRARIES =====//
 #include <stdio.h>
 
-#include "../api/MAssertApi.hpp"
+//===== USER LIBRARIES =====//
+#include "MUnitTest/api/MUnitTestApi.hpp"
 
-#include "unittest-cpp/UnitTest++/UnitTest++.h"
+//====== USER SOURCE =====//
+#include "../api/MAssertApi.hpp"
 
 using namespace MbeddedNinja;
 
 namespace MAssertTestsNs
 {
-	SUITE(BasicTests)
+
+	bool _assertCalled;
+
+	MAssertNs::MAssert::FailBehavior MyHandler(
+			const char* condition,
+			const char* msg,
+			const char* file,
+			const int line)
 	{
-		bool _assertCalled;
+		std::printf("%s(%d): Assert Failure: ", file, line);
 
-		MAssertNs::MAssert::FailBehavior MyHandler(
-				const char* condition,
-				const char* msg,
-				const char* file,
-				const int line)
-		{
-			std::printf("%s(%d): Assert Failure: ", file, line);
+		if (condition != NULL)
+			std::printf("'%s' ", condition);
 
-			if (condition != NULL)
-				std::printf("'%s' ", condition);
+		if (msg != NULL)
+			std::printf("%s", msg);
 
-			if (msg != NULL)
-				std::printf("%s", msg);
+		std::printf("\n");
 
-			std::printf("\n");
+		_assertCalled = true;
 
-			_assertCalled = true;
+		return MAssertNs::MAssert::Halt;
+	}
 
-			return MAssertNs::MAssert::Halt;
-		}
+	MTEST(BasicAssertRaisedTest)
+	{
 
-		TEST(BasicAssertRaisedTest)
-		{
+		MAssertNs::MAssert::SetHandler(MyHandler);
 
-			MAssertNs::MAssert::SetHandler(MyHandler);
+		_assertCalled = false;
 
-			_assertCalled = false;
+		//M_STATIC_ASSERT(0)
 
-			//M_STATIC_ASSERT(0)
+		M_ASSERT(false);
 
-			M_ASSERT(false);
+		// Check capacity is calculated correctly
+		CHECK_EQUAL(true, _assertCalled);
+	}
 
-			// Check capacity is calculated correctly
-			CHECK_EQUAL(true, _assertCalled);
-		}
+	MTEST(BasicAssertNotRaisedTest)
+	{
 
-		TEST(BasicAssertNotRaisedTest)
-		{
+		MAssertNs::MAssert::SetHandler(MyHandler);
 
-			MAssertNs::MAssert::SetHandler(MyHandler);
+		_assertCalled = false;
 
-			_assertCalled = false;
+		M_ASSERT(true);
 
-			M_ASSERT(true);
-
-			// Check capacity is calculated correctly
-			CHECK_EQUAL(false, _assertCalled);
-		}
+		// Check capacity is calculated correctly
+		CHECK_EQUAL(false, _assertCalled);
+	}
 
 
-	} // SUITE(BasicTests)
 } // namespace MAssertTestsNs
