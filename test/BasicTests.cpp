@@ -2,7 +2,7 @@
 //! @file 			BasicTests.cpp
 //! @author 		Geoffrey Hunter <gbmhunter@gmail.com> (www.mbedded.ninja)
 //! @created		2014-08-19
-//! @last-modified 	2014-09-12
+//! @last-modified 	2014-09-25
 //! @brief 			Contains basic tests.
 //! @details
 //!					See README.rst in root dir for more info.
@@ -56,7 +56,7 @@ namespace MAssertTestsNs
 		M_ASSERT(false);
 
 		// Check capacity is calculated correctly
-		CHECK_EQUAL(true, _assertCalled);
+		CHECK_EQUAL(_assertCalled, true);
 	}
 
 	MTEST(BasicAssertNotRaisedTest)
@@ -69,7 +69,7 @@ namespace MAssertTestsNs
 		M_ASSERT(true);
 
 		// Check capacity is calculated correctly
-		CHECK_EQUAL(false, _assertCalled);
+		CHECK_EQUAL(_assertCalled, false);
 	}
 
 
