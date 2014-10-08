@@ -3,7 +3,7 @@
 # @author 			Geoffrey Hunter <gbmhunter@gmail.com> (wwww.mbedded.ninja)
 # @edited 			n/a
 # @created			2014-08-19
-# @last-modified 	2014-09-12
+# @last-modified 	2014-10-09
 # @brief 			Makefile for Linux-based make, to compile the MAssert-Cpp library, example code and run unit test code.
 # @details
 #					See README in repo root dir for more info.
@@ -11,17 +11,17 @@
 SRC_CC := g++
 SRC_OBJ_FILES := $(patsubst %.cpp,%.o,$(wildcard src/*.cpp))
 SRC_LD_FLAGS :=
-SRC_CC_FLAGS := -Wall -g -c  -I. -I./lib -std=c++0x
+SRC_CC_FLAGS := -Wall -g -c -O0 -I. -I./lib -std=c++11
 
 TEST_CC := g++
 TEST_OBJ_FILES := $(patsubst %.cpp,%.o,$(wildcard test/*.cpp))
 TEST_LD_FLAGS := 
-TEST_CC_FLAGS := -Wall -g -c  -I. -I./lib -std=c++0x
+TEST_CC_FLAGS := -Wall -g -c -O0 -I. -I./lib -std=c++11
 
 EXAMPLE_CC := g++
 EXAMPLE_OBJ_FILES := $(patsubst %.cpp,%.o,$(wildcard example/*.cpp))
 EXAMPLE_LD_FLAGS := 
-EXAMPLE_CC_FLAGS := -Wall -g -c -I. -I./lib -std=c++0x
+EXAMPLE_CC_FLAGS := -Wall -g -c -O0 -I. -I./lib -std=c++11
 
 DEP_LIB_PATHS := -L ../MUnitTest
 DEP_LIBS := -l MUnitTest
